@@ -104,8 +104,6 @@ class _SocketAttachment
 /**
  * Zabbix 4.x Agent Active Check Listener
  *
- * Notice: SocketTimeoutException is not catched, users should catch it.
- *
  * Usage: see example/ActiveCheckListener.java
  */
 public class Z4ActiveAgentListener
