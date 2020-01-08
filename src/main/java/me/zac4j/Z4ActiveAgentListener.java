@@ -32,6 +32,7 @@ import me.zac4j.pkt.active.ZBXAgentRequests;
 import me.zac4j.pkt.active.ZBXActiveAgentPacket;
 import me.zac4j.pkt.active.ZBXActiveAgentReport;
 import me.zac4j.pkt.active.ZBXActiveAgentACResponse;
+import me.zac4j.pkt.active.ZBXActiveAgentReportACK;
 import me.zac4j.Z4ActiveAgentReportHandler;
 
 
@@ -401,6 +402,10 @@ public class Z4ActiveAgentListener
 		SelectionKey key,
 		ZBXActiveAgentReport pkt
 	) throws BrokenPipe {
+		int reportEntryNum;
+		long ms0;
+		long ms1;
+		float secSpent;
 		SocketChannel sock;
 		InetSocketAddress src;
 
@@ -412,6 +417,7 @@ public class Z4ActiveAgentListener
 			throw new BrokenPipe();
 		}
 
+		ms0 = System.currentTimeMillis();
 		for (Z4ActiveAgentReportHandler handler : this.reportHandlers) {
 			try {
 				handler.handleReport(pkt, src);
@@ -420,6 +426,17 @@ public class Z4ActiveAgentListener
 				return;
 			}
 		}
+		ms1 = System.currentTimeMillis();
+
+		secSpent = (ms1 - ms0) / 1000.0f;
+
+		reportEntryNum = pkt.getEntryNum();
+		this.appendReportACK(
+			key,
+			reportEntryNum,
+			reportEntryNum,
+			secSpent
+		);
 	}
 
 	protected void onWrite(SelectionKey key) {
@@ -474,6 +491,29 @@ public class Z4ActiveAgentListener
 		ByteBuffer bf;
 
 		data = this.acRespPkt.getBytes();
+		bf = ByteBuffer.allocate(data.length);
+		bf.put(data);
+
+		this.appendData(key, bf);
+	}
+
+	protected void appendReportACK(
+		SelectionKey key,
+		int total,
+		int processed,
+		float secondsSpent
+	){
+		byte[] data;
+		ByteBuffer bf;
+		ZBXActiveAgentReportACK ack;
+
+		ack = new ZBXActiveAgentReportACK();
+		ack.setInfoTotal(total);
+		ack.setInfoProcessed(processed);
+		ack.setInfoFailed(total - processed);
+		ack.setInfoSecondsSpent(secondsSpent);
+
+		data = ack.getBytes();
 		bf = ByteBuffer.allocate(data.length);
 		bf.put(data);
 

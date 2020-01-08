@@ -43,4 +43,8 @@ public class ZBXActiveAgentReport extends ZBXActiveAgentPacket
 	public int getNs() {
 		return super.getJSON().getInt("ns");
 	}
+
+	public int getEntryNum() {
+		return this.getFData().length();
+	}
 }

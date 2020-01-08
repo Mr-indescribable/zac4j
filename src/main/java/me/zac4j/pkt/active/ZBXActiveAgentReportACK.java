@@ -41,18 +41,22 @@ public class ZBXActiveAgentReportACK extends ZBXActiveAgentPacket
 
 	public void setInfoProcessed(int num) {
 		this.processed = num;
+		this.updateJSON();
 	}
 
 	public void setInfoFailed(int num) {
 		this.failed = num;
+		this.updateJSON();
 	}
 
 	public void setInfoTotal(int num) {
 		this.total = num;
+		this.updateJSON();
 	}
 
 	public void setInfoSecondsSpent(float sec) {
 		this.secondsSpent = sec;
+		this.updateJSON();
 	}
 
 	public int getInfoProcessed() {
@@ -63,11 +67,11 @@ public class ZBXActiveAgentReportACK extends ZBXActiveAgentPacket
 		return this.failed;
 	}
 
-	public int setInfoTotal() {
+	public int getInfoTotal() {
 		return this.total;
 	}
 
-	public float setInfoSecondsSpent() {
+	public float getInfoSecondsSpent() {
 		return this.secondsSpent;
 	}
 
