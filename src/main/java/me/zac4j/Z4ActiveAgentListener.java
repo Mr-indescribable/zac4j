@@ -47,7 +47,15 @@ class _SocketAttachment
 	}
 
 	public void clean() {
+		this.cleanSendCtx();
+		this.cleanRecvCtx();
+	}
+
+	public void cleanSendCtx() {
 		this.sendBuf = null;
+	}
+
+	public void cleanRecvCtx() {
 		this.hRecvBuf = ByteBuffer.allocate( ZBXPacketHeader.ZBX_HEADER_LEN );
 		this.bRecvBuf = null;
 		this.header = null;
@@ -349,11 +357,10 @@ public class Z4ActiveAgentListener
 			try {
 				pkt = ZBXActiveAgentPacket.fromBytes(data, header);
 			} catch (NotEnoughData e) {
-				e.printStackTrace();
 				throw new RuntimeException("THIS IS IMPOSSIBLE");
 			}
 
-			att.clean();
+			att.cleanRecvCtx();
 			this.handlePacket(key, pkt);
 		}
 	}
@@ -442,6 +449,11 @@ public class Z4ActiveAgentListener
 	}
 
 	protected void onNoDataToSend(SelectionKey key) {
+		_SocketAttachment att;
+
+		att = (_SocketAttachment) key.attachment();
+
+		att.cleanSendCtx();
 		key.interestOps(OP_RO);
 	}
 
