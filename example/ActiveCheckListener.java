@@ -35,7 +35,7 @@ public class ActiveCheckListener
 		ZBXACEntry item = new ZBXACEntry();
 
 		/**
-		 * lastlogsize and mtime must be given, Zabbix Active check
+		 * lastlogsize and mtime must be given, Zabbix active check
 		 * protocol defines this and we must follow.
 		 */
 		item.setKey("system.cpu.load[all,avg1]");
